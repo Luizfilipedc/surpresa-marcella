@@ -5,99 +5,129 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Surpresa para Marcella 💖</title>
 <style>
-  :root{
+  :root {
     --bg: linear-gradient(135deg,#fff7fb,#ffeef7 40%, #fffbe6);
     --accent:#ff5da2;
     --accent2:#ffb86b;
     --text:#2b2b2b;
     --card:#ffffffcc;
   }
-  html,body{height:100%;margin:0;font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-  body{
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: var(--bg);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:32px;
-    overflow:hidden;
   }
 
-  .card{
-    width:min(900px,96vw);
-    background:var(--card);
-    border-radius:18px;
-    box-shadow: 0 12px 40px rgba(20,20,40,0.12);
-    padding:36px;
-    position:relative;
-    overflow:hidden;
-    text-align:center;
-    z-index:10;
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
   }
 
-  h1{
-    margin:6px 0 10px;
-    font-size:clamp(22px,4vw,36px);
-    color:var(--text);
-  }
-  p.lead{
-    margin:0 0 22px;
-    color:#444;
-    font-size:clamp(14px,2.2vw,18px);
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(20,20,40,0.12);
+    padding: 24px;
+    position: relative;
+    overflow-y: auto;
+    text-align: center;
+    max-height: 90vh;
   }
 
-  .btn{
-    display:inline-block;
-    background:linear-gradient(90deg,var(--accent),var(--accent2));
-    color:white;
-    padding:12px 20px;
-    border-radius:999px;
-    text-decoration:none;
-    font-weight:600;
-    box-shadow:0 6px 20px rgba(255,93,162,0.18);
-    transition:transform .18s ease;
+  h1 {
+    margin: 6px 0 10px;
+    font-size: clamp(20px, 5vw, 30px);
+    color: var(--text);
   }
-  .btn:active{transform:translateY(2px) scale(.997)}
 
-  /* corações flutuantes */
+  p.lead {
+    margin: 0 0 18px;
+    color: #444;
+    font-size: clamp(14px, 4vw, 16px);
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: white;
+    padding: 12px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(255,93,162,0.18);
+    transition: transform .18s ease;
+  }
+
+  .btn:active {
+    transform: translateY(2px) scale(.997);
+  }
+
+  .message {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
+    border: 1px solid rgba(0,0,0,0.04);
+    text-align: left;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .message p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #222;
+    line-height: 1.5;
+  }
+
+  .signature {
+    margin-top: 14px;
+    color: #6b6b6b;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .small {
+    margin-top: 12px;
+    color: #8a8a8a;
+    font-size: 13px;
+  }
+
   .heart {
     position: fixed;
-    pointer-events:none;
-    width:20px;
-    height:20px;
-    transform-origin:center;
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+    transform-origin: center;
     animation: float 10s linear infinite;
-    opacity:0.4;
-    z-index:0;
+    opacity: 0.4;
+    z-index: 0;
   }
 
-  @keyframes float{
-    0%{transform: translateY(0) rotate(0) scale(1)}
-    50%{transform: translateY(-160px) rotate(30deg) scale(1.1)}
-    100%{transform: translateY(-320px) rotate(-10deg) scale(0.9); opacity:0;}
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0) scale(1); }
+    50% { transform: translateY(-160px) rotate(30deg) scale(1.1); }
+    100% { transform: translateY(-320px) rotate(-10deg) scale(0.9); opacity: 0; }
   }
 
-  /* área de mensagem personalizada */
-  .message{
-    margin-top:18px;
-    padding:18px;
-    border-radius:12px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
-    border:1px solid rgba(0,0,0,0.04);
-  }
-  .message p{margin:8px 0;font-size:16px;color:#222;line-height:1.4;}
-  .signature{margin-top:14px;color:#6b6b6b;font-weight:600}
-
-  /* confetti canvas full */
-  #confettiCanvas{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:0;
-    opacity:0.4;
+  #confettiCanvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
   }
 
-  /* footer */
-  .small{margin-top:12px;color:#8a8a8a;font-size:13px}
+  @media (max-height: 700px) {
+    .card { padding: 20px; }
+    .message { max-height: 50vh; }
+  }
 </style>
 </head>
 <body>
@@ -217,4 +247,5 @@ Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vi
 </script>
 </body>
 </html>
+
 
