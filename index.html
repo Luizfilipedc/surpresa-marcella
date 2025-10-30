@@ -18,6 +18,7 @@
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: var(--bg);
+    overflow: hidden;
   }
 
   body {
@@ -25,6 +26,7 @@
     align-items: center;
     justify-content: center;
     padding: 16px;
+    position: relative;
   }
 
   .card {
@@ -38,6 +40,7 @@
     overflow-y: auto;
     text-align: center;
     max-height: 90vh;
+    z-index: 2;
   }
 
   h1 {
@@ -124,6 +127,25 @@
     opacity: 0.4;
   }
 
+  /* fotos flutuando */
+  .floating-photo {
+    position: fixed;
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    object-fit: cover;
+    opacity: 0.15;
+    animation: floatPhoto 30s linear infinite;
+    z-index: 1;
+  }
+
+  @keyframes floatPhoto {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.18; }
+    90% { opacity: 0.18; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+  }
+
   @media (max-height: 700px) {
     .card { padding: 20px; }
     .message { max-height: 50vh; }
@@ -132,8 +154,13 @@
 </head>
 <body>
 
-  <!-- confetes atrás de tudo -->
+  <!-- confetes -->
   <canvas id="confettiCanvas"></canvas>
+
+  <!-- fotos flutuantes -->
+  <img src="WhatsApp-Image-2025-10-30-at-12.59.16.jpg" class="floating-photo" style="left:10%; animation-delay:0s;">
+  <img src="WhatsApp-Image-2025-10-30-at-12.59.26.jpg" class="floating-photo" style="left:45%; animation-delay:10s;">
+  <img src="WhatsApp-Image-2025-10-30-at-12.59.38.jpg" class="floating-photo" style="left:75%; animation-delay:20s;">
 
   <div class="card" role="main" aria-label="Mensagem surpresa">
     <h1>Para minha princesa 💕</h1>
@@ -144,22 +171,21 @@
     <div class="message" id="surprise" style="display:none;">
       <p>Meu amor, queria te desejar um feliz aniversário hoje! Que você continue sendo essa pessoa iluminada, carinhosa, amorosa, dona da risada mais linda desse mundo, e que continue sendo a minha princesa pro resto da vida.</p>
       <p>Quem diria que já se foram quatro anos de muita história juntos? Muitas risadas e muitas alegrias ao seu lado!
-E você com 21 anos já, e eu só com 20… que isso, tá pegando um novinho mesmo, hein? Kkkkk.</p>
+      E você com 21 anos já, e eu só com 20… que isso, tá pegando um novinho mesmo, hein? Kkkkk.</p>
       <p>Queria agradecer hoje a Deus também pela sua vida, essa pessoa abençoada que Ele colocou no meu caminho pra me abençoar também e fazer minha vida mais feliz e alegre ao longo desses anos.
-A sua companhia é indescritível e indispensável em qualquer ocasião. Saiba que você é uma pessoa leve, que por onde passa impressiona todos com a sua beleza e alegria contagiante.</p>
+      A sua companhia é indescritível e indispensável em qualquer ocasião. Saiba que você é uma pessoa leve, que por onde passa impressiona todos com a sua beleza e alegria contagiante.</p>
       <p>Falando um pouquinho dos nossos momentos, lembro até hoje quando conversávamos e passávamos tempos e tempos trocando figurinhas de cantadas. O meu dia podia ser só aquela parte que já estava ótimo, era uma alegria sem fim.
-E pra mim é isso que você representa: uma pessoa com quem eu posso ter a certeza de que, quando tiver um dia ruim, vai conseguir me fazer mais feliz com uma simples conversa.
-E eu te garanto que muitos pensam a mesma coisa, porque essa é você, e é linda!!</p>
+      E pra mim é isso que você representa: uma pessoa com quem eu posso ter a certeza de que, quando tiver um dia ruim, vai conseguir me fazer mais feliz com uma simples conversa.
+      E eu te garanto que muitos pensam a mesma coisa, porque essa é você, e é linda!!</p>
       <p>E hoje, no seu aniversário de 21 anos, eu só consigo me imaginar comemorando com você até os 100, se Deus quiser. E que Ele me leve primeiro, porque a vida sem você não deve ser nada fácil.
-Quero que se lembre de que estou aqui com você pro que der e vier. Pode contar comigo em qualquer situação, seja ela boa ou ruim.
-Quero ser, pra você, pelo menos 1% da paz que você representa pra mim. 
-Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vida, farei o possível pra que sim!! Feliz aniversário minha princesinha🤍🤍🫶🏻🫶🏻</p>
+      Quero que se lembre de que estou aqui com você pro que der e vier. Pode contar comigo em qualquer situação, seja ela boa ou ruim.
+      Quero ser, pra você, pelo menos 1% da paz que você representa pra mim. 
+      Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vida, farei o possível pra que sim!! Feliz aniversário minha princesinha🤍🤍🫶🏻🫶🏻</p>
       <div class="signature">— Com amor, <span id="autor">Seu namorado</span> 💖</div>
     </div>
 
     <div class="small">Dica: clique no botão.</div>
 
-    <!-- modelo de coração -->
     <svg class="heart" viewBox="0 0 32 29" id="heartTemplate" style="display:none;">
       <path d="M23.6 0c-2.7 0-5 1.6-6.6 3.9C15.4 1.6 13.1 0 10.4 0 4.7 0 0 4.7 0 10.4 0 22 16 29 16 29s16-7 16-18.6C32 4.7 27.3 0 21.6 0z" fill="#ff5da2"/>
     </svg>
@@ -174,7 +200,7 @@ Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vi
     surprise.style.display = 'block';
   });
 
-  // confete contínuo e suave
+  // confete contínuo
   function launchConfetti(count = 30){
     const canvas = document.getElementById('confettiCanvas');
     const ctx = canvas.getContext('2d');
@@ -213,7 +239,7 @@ Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vi
     frame();
   }
 
-  // corações flutuando suavemente
+  // corações flutuando
   function spawnHearts(n=3){
     const template = document.getElementById('heartTemplate');
     for(let i=0;i<n;i++){
@@ -232,11 +258,11 @@ Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vi
     }
   }
 
-  // inicia efeitos contínuos
+  // inicia efeitos
   launchConfetti(25);
   setInterval(()=> spawnHearts(2), 2000);
 
-  // personaliza assinatura (opcional)
+  // assinatura personalizada (opcional)
   (function(){
     const params = new URLSearchParams(location.search);
     const autor = params.get('by');
@@ -247,5 +273,3 @@ Por fim, te desejo o dia mais especial do mundo, que ele seja o melhor da sua vi
 </script>
 </body>
 </html>
-
-
