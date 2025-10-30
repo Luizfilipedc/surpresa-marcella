@@ -19,6 +19,7 @@
     align-items:center;
     justify-content:center;
     padding:32px;
+    overflow:hidden;
   }
 
   .card{
@@ -30,6 +31,7 @@
     position:relative;
     overflow:hidden;
     text-align:center;
+    z-index:10;
   }
 
   h1{
@@ -58,17 +60,20 @@
 
   /* corações flutuantes */
   .heart {
-    position:absolute;
+    position: fixed;
     pointer-events:none;
-    width:30px;height:30px;
+    width:20px;
+    height:20px;
     transform-origin:center;
-    animation: float 6s linear infinite;
-    opacity:.95;
+    animation: float 10s linear infinite;
+    opacity:0.4;
+    z-index:0;
   }
+
   @keyframes float{
     0%{transform: translateY(0) rotate(0) scale(1)}
-    50%{transform: translateY(-160px) rotate(30deg) scale(1.12)}
-    100%{transform: translateY(-320px) rotate(-10deg) scale(.9)}
+    50%{transform: translateY(-160px) rotate(30deg) scale(1.1)}
+    100%{transform: translateY(-320px) rotate(-10deg) scale(0.9); opacity:0;}
   }
 
   /* área de mensagem personalizada */
@@ -83,16 +88,24 @@
   .signature{margin-top:14px;color:#6b6b6b;font-weight:600}
 
   /* confetti canvas full */
-  #confettiCanvas{ position:absolute; inset:0; pointer-events:none; z-index:5; }
+  #confettiCanvas{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:0.4;
+  }
 
   /* footer */
   .small{margin-top:12px;color:#8a8a8a;font-size:13px}
 </style>
 </head>
 <body>
-  <div class="card" role="main" aria-label="Mensagem surpresa">
-    <canvas id="confettiCanvas"></canvas>
 
+  <!-- confetes atrás de tudo -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="card" role="main" aria-label="Mensagem surpresa">
     <h1>Para minha princesa 💕</h1>
     <p class="lead">Hoje eu queria te encher de carinho em forma de página. Você é incrível — e eu te amo muito.</p>
 
@@ -104,53 +117,50 @@
       <div class="signature">— Com amor, <span id="autor">Seu namorado</span> 💖</div>
     </div>
 
-    <div class="small">Dica: clique no botão mais de uma vez para mais confete 🎉</div>
+    <div class="small">Dica: clique no botão mais de uma vez para mais carinho 🎉</div>
 
-    <!-- corações (serão clonados dinamicamente e posicionados) -->
-    <svg class="heart" viewBox="0 0 32 29" id="heartTemplate" style="left:10px; top:80%; display:none;">
+    <!-- modelo de coração -->
+    <svg class="heart" viewBox="0 0 32 29" id="heartTemplate" style="display:none;">
       <path d="M23.6 0c-2.7 0-5 1.6-6.6 3.9C15.4 1.6 13.1 0 10.4 0 4.7 0 0 4.7 0 10.4 0 22 16 29 16 29s16-7 16-18.6C32 4.7 27.3 0 21.6 0z" fill="#ff5da2"/>
     </svg>
-
   </div>
 
 <script>
-  // botão revela mensagem e dispara confete
+  // mostra a mensagem
   const btn = document.getElementById('revealBtn');
   const surprise = document.getElementById('surprise');
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    surprise.style.display = surprise.style.display === 'none' ? 'block' : 'block';
-    launchConfetti(120);
-    spawnHearts(8);
+    surprise.style.display = 'block';
   });
 
-  // confetti simples (canvas)
-  function launchConfetti(count = 80){
+  // confete contínuo e suave
+  function launchConfetti(count = 30){
     const canvas = document.getElementById('confettiCanvas');
     const ctx = canvas.getContext('2d');
-    function resize(){ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
+    function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
     resize(); window.addEventListener('resize', resize);
+
     const colors = ['#ff5da2','#ffd56b','#8be1ff','#c47bff','#ff9bb3'];
-    let pieces = [];
-    for(let i=0;i<count;i++){
-      pieces.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height - canvas.height/2,
-        w: 6 + Math.random()*8,
-        h: 8 + Math.random()*10,
-        vx: -2 + Math.random()*4,
-        vy: 2 + Math.random()*6,
-        rot: Math.random()*360,
-        vr: -6 + Math.random()*12,
-        color: colors[Math.floor(Math.random()*colors.length)],
-        ttl: 120 + Math.random()*80
-      });
-    }
-    let anim;
+    let pieces = Array.from({length: count}, () => ({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      w: 6 + Math.random()*6,
+      h: 8 + Math.random()*6,
+      vx: -1 + Math.random()*2,
+      vy: 1 + Math.random()*2,
+      rot: Math.random()*360,
+      vr: -3 + Math.random()*6,
+      color: colors[Math.floor(Math.random()*colors.length)]
+    }));
+
     function frame(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
       for(let p of pieces){
-        p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.ttl--;
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        if(p.y > canvas.height) p.y = -10;
+        if(p.x > canvas.width) p.x = -10;
+        if(p.x < -10) p.x = canvas.width;
         ctx.save();
         ctx.translate(p.x,p.y);
         ctx.rotate(p.rot*Math.PI/180);
@@ -158,39 +168,35 @@
         ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
         ctx.restore();
       }
-      pieces = pieces.filter(p => p.ttl>0 && p.y < canvas.height+50);
-      if(pieces.length) anim = requestAnimationFrame(frame);
-      else cancelAnimationFrame(anim);
+      requestAnimationFrame(frame);
     }
-    cancelAnimationFrame(anim);
     frame();
   }
 
-  // spawn corações flutuantes
-  function spawnHearts(n=6){
+  // corações flutuando suavemente
+  function spawnHearts(n=3){
     const template = document.getElementById('heartTemplate');
     for(let i=0;i<n;i++){
       const clone = template.cloneNode(true);
       clone.style.display='block';
       clone.id = '';
-      const left = Math.random()*80 + 5;
-      const size = 18 + Math.random()*30;
-      clone.style.left = left + '%';
-      clone.style.bottom = (-20 - Math.random()*40) + 'px';
+      clone.style.left = Math.random()*100 + 'vw';
+      clone.style.top = '100vh';
+      const size = 16 + Math.random()*20;
       clone.style.width = size+'px';
       clone.style.height = size+'px';
-      clone.style.animationDelay = (Math.random()*2)+'s';
-      clone.style.opacity = 0.95 - Math.random()*0.3;
-      document.querySelector('.card').appendChild(clone);
-      // remove depois de 9s
-      setTimeout(()=> clone.remove(), 9000 + Math.random()*3000);
+      clone.style.animationDelay = (Math.random()*5)+'s';
+      clone.style.opacity = 0.3 + Math.random()*0.3;
+      document.body.appendChild(clone);
+      setTimeout(()=> clone.remove(), 12000 + Math.random()*3000);
     }
   }
 
-  // pequenos corações automáticos no começo
-  setTimeout(()=> spawnHearts(4), 800);
+  // inicia efeitos contínuos
+  launchConfetti(25);
+  setInterval(()=> spawnHearts(2), 2000);
 
-  // personalizar assinatura (opcional): pega do querystring ?by=Nome
+  // personaliza assinatura (opcional)
   (function(){
     const params = new URLSearchParams(location.search);
     const autor = params.get('by');
